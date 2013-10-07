@@ -11,10 +11,6 @@
 		var pluginTogetherJs = {
 			$el: $('#wp-admin-bar-together-js a'),
 			init: function() {
-				if ( TogetherJS._loaded ) {
-					this.$el.html( pluginTogetherJsVars.labelStop );
-					_this.$el.addClass('togetherjs-started');
-				}
 				this.setupEventHandlers();
 			},
 			setupEventHandlers: function() {
