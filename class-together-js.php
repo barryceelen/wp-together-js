@@ -54,15 +54,25 @@ class TogetherJS {
 	public static $options = array();
 
 	/**
-	 * Initialize the plugin by setting localization, filters, and administration functions.
+	 * Initialize the plugin.
 	 *
 	 * @since     0.0.1
+	 *
+	 * @todo  Implement TogetherJSConfig_hubBase, TogetherJSConfig_cloneClicks etc.
+	 *        See: https://togetherjs.com/docs/#configuring-togetherjs
 	 */
 	private function __construct() {
 
+		$current_user = wp_get_current_user();
+
 		$default_options = array(
-			'label_start' => __( 'Start TogetherJS', 'bla' ),
-			'label_stop'  => __( 'End TogetherJS', 'bla' ),
+			'labelStart'     => __( 'Start TogetherJS', $this->plugin_slug ),
+			'labelStop'      => __( 'End TogetherJS', $this->plugin_slug ),
+			'siteName'       =>	get_bloginfo( 'name' ),
+			'toolName'       =>	'TogetherJS',
+			'enableShortcut' => false,
+			'userName'       => $current_user->user_login,
+			'avatarUrl'      => $this->get_avatar( $current_user->user_email ),
 		);
 
 		self::$options = apply_filters( $this->plugin_slug . '_options', $default_options );
@@ -114,7 +124,7 @@ class TogetherJS {
 	/**
 	 * Register and enqueue JavaScript.
 	 *
-	 * @return void Exits if user is not logged in
+	 * @return void Currently only usable via the Toolbar, exit if user is not logged in.
 	 *
 	 * @since     0.0.1
 	 */
@@ -141,8 +151,13 @@ class TogetherJS {
 			$this->plugin_slug . '-script',
 			'pluginTogetherJsVars',
 			array(
-				'labelStart' => self::$options['label_start'],
-				'labelStop' => self::$options['label_stop']
+				'labelStart'     => self::$options['labelStart'],
+				'labelStop'      => self::$options['labelStop'],
+				'siteName'       => self::$options['siteName'],
+				'toolName'       => self::$options['toolName'],
+				'enableShortcut' => self::$options['enableShortcut'],
+				'userName'       => self::$options['userName'],
+				'avatarUrl'      => self::$options['avatarUrl'],
 			)
 		);
 	}
@@ -157,13 +172,52 @@ class TogetherJS {
 		global $wp_admin_bar;
 		$wp_admin_bar->add_menu( array(
 			'id'        => $this->plugin_slug,
-			'title'     => self::$options['label_start'],
+			'title'     => self::$options['labelStart'],
 			'href'      => '#',
 			'meta'      => array(
 				'class' => 'hide-if-no-js'
-				// Handled by main.js
+				// Handled by main.js for now
 				// 'onclick' => 'TogetherJS(this); return false'
 			),
 		) );
+	}
+
+	/**
+	 * Get avatar by email address
+	 *
+	 * @since  0.0.1
+	 */
+	private function get_avatar( $email ) {
+
+		$size = '40';
+		$email_hash = md5( strtolower( trim( $email ) ) );
+		$default = get_option('avatar_default');
+
+		if ( is_ssl() ) {
+			$host = 'https://secure.gravatar.com';
+		} else {
+			$host = sprintf( "http://%d.gravatar.com", ( hexdec( $email_hash[0] ) % 2 ) );
+		}
+
+		if ( 'mystery' == $default )
+			$default = "$host/avatar/ad516503a11cd5ca435acc9bb6523536?s={$size}"; // ad516503a11cd5ca435acc9bb6523536 == md5('unknown@gravatar.com')
+		elseif ( 'blank' == $default )
+			$default = $email ? 'blank' : includes_url( 'images/blank.gif' );
+		elseif ( 'gravatar_default' == $default )
+			$default = '';
+		elseif ( strpos($default, 'http://') === 0 )
+			$default = add_query_arg( 's', $size, $default );
+
+		$out  = "$host/avatar/";
+		$out .= $email_hash;
+		$out .= '?s='.$size;
+		$out .= '&amp;d=' . urlencode( $default );
+
+		$rating = get_option('avatar_rating');
+		if ( !empty( $rating ) )
+			$out .= "&amp;r={$rating}";
+
+		return $out;
+
 	}
 }
