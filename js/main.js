@@ -5,15 +5,20 @@
 
 			init: function() {
 
-				if ( 'undefined' === typeof TogetherJS ) {
+				if ( 'undefined' === typeof TogetherJS || 'undefined' === typeof pluginTogetherJsVars.options ) {
 					return;
 				}
 
-				TogetherJS.config( 'siteName', pluginTogetherJsVars.siteName );
-				TogetherJS.config( 'toolName', pluginTogetherJsVars.toolName );
-				TogetherJS.config( 'enableShortcut', pluginTogetherJsVars.enableShortcut );
-				TogetherJS.config( 'getUserName', function() { return pluginTogetherJsVars.userName; } );
-				TogetherJS.config( 'getUserAvatar', function() { return pluginTogetherJsVars.avatarUrl; } );
+				$.each( pluginTogetherJsVars.options, function( k, v ) {
+
+					if ( 'userAvatar' === k ) {
+						TogetherJS.config( 'getUserAvatar', function() { return v; } );
+					} else if ( 'userName' === k ) {
+						TogetherJS.config( 'getUserName', function() { return v; } );
+					} else {
+						TogetherJS.config( k, v );
+					}
+				});
 
 				this.setupEventHandlers();
 			},

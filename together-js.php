@@ -11,7 +11,7 @@
  * Plugin Name: TogetherJS
  * Plugin URI:  http://github.com/barryceelen/wp-together-js
  * Description: Adds together.js to your WordPress site.
- * Version:     0.0.1
+ * Version:     1.0.0
  * Author:      Barry Ceelen
  * Author URI:  http://github.com/barryceelen
  * Text Domain: together-js
@@ -27,4 +27,3 @@ if ( ! defined( 'WPINC' ) ) {
 
 // Include and instantiate main plugin class.
 require_once( plugin_dir_path( __FILE__ ) . 'class-together-js.php' );
-add_action( 'plugins_loaded', array( 'TogetherJS', 'get_instance' ) );

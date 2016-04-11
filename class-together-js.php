@@ -23,7 +23,7 @@ class TogetherJS {
 	 *
 	 * @var string
 	 */
-	const VERSION = '0.0.1';
+	const VERSION = '1.0.0';
 
 	/**
 	 * Instance of this class.
@@ -48,24 +48,11 @@ class TogetherJS {
 	 *
 	 * @since 0.0.1
 	 *
-	 * @todo  Implement TogetherJSConfig_hubBase, TogetherJSConfig_cloneClicks etc.
+	 * @todo  Implement TogetherJSConfig_cloneClicks for admin elements, eg. to expand meta boxes?
+	 *        Set TogetherJSConfig_cloneClicks to true by default?
 	 *        See: https://togetherjs.com/docs/#configuring-togetherjs
 	 */
 	private function __construct() {
-
-		$current_user = wp_get_current_user();
-
-		$default_options = array(
-			'labelStart'     => __( 'Start TogetherJS', 'together-js' ),
-			'labelStop'      => __( 'End TogetherJS', 'together-js' ),
-			'siteName'       => get_bloginfo( 'name' ),
-			'toolName'       => 'TogetherJS',
-			'enableShortcut' => false,
-			'userName'       => $current_user->user_login,
-			'avatarUrl'      => $this->get_avatar( $current_user->user_email ),
-		);
-
-		self::$options = apply_filters( 'together-js_options', $default_options );
 
 		// Load plugin text domain.
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
@@ -138,18 +125,24 @@ class TogetherJS {
 			true
 		);
 
+		$current_user = wp_get_current_user();
+
+		$options = array(
+			'enableShortcut' => false,
+			'siteName'       => get_bloginfo( 'name' ),
+			'toolName'       => 'TogetherJS',
+			'userAvatar'     => $this->get_avatar( $current_user->user_email ),
+			'userName'       => $current_user->user_login,
+		);
+
 		wp_localize_script(
 			'together-js-script',
 			'pluginTogetherJsVars',
 			array(
-				'labelStart'     => self::$options['labelStart'],
-				'labelStop'      => self::$options['labelStop'],
-				'siteName'       => self::$options['siteName'],
-				'toolName'       => self::$options['toolName'],
-				'enableShortcut' => self::$options['enableShortcut'],
-				'userName'       => self::$options['userName'],
-				'avatarUrl'      => self::$options['avatarUrl'],
-				'buttonEl'       => '#wp-admin-bar-together-js .ab-item',
+				'buttonEl'   => '#wp-admin-bar-together-js .ab-item',
+				'labelStart' => apply_filters( 'plugin-together-js-label-start', __( 'Start TogetherJS', 'together-js' ) ),
+				'labelStop'  => apply_filters( 'plugin-together-js-label-stop', __( 'End TogetherJS', 'together-js' ) ),
+				'options'    => apply_filters( 'plugin-together-js-options', $options ),
 			)
 		);
 	}
@@ -170,7 +163,7 @@ class TogetherJS {
 		$wp_admin_bar->add_menu(
 			array(
 				'id'        => 'together-js',
-				'title'     => self::$options['labelStart'],
+				'title'     => apply_filters( 'plugin-together-js-label-start', __( 'Start TogetherJS', 'together-js' ) ),
 				'href'      => '#',
 				'meta'      => array(
 					'class' => 'hide-if-no-js',
@@ -223,3 +216,6 @@ class TogetherJS {
 		return $out;
 	}
 }
+
+global $togetherjs;
+$togetherjs = TogetherJS::get_instance();
