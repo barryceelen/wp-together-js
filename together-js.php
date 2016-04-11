@@ -1,12 +1,13 @@
 <?php
 /**
+ * Main plugin file
+ *
  * @package   TogetherJS
  * @author    Barry Ceelen <b@rryceelen.com>
  * @license   GPL-2.0+
  * @link      http://github.com/barryceelen
  * @copyright 2013 Barry Ceelen
  *
- * @wordpress-plugin
  * Plugin Name: TogetherJS
  * Plugin URI:  http://github.com/barryceelen/wp-together-js
  * Description: Adds together.js to your WordPress site.
