@@ -77,7 +77,7 @@ class TogetherJS {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Add link to admin bar.
-		add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_link' ) );
+		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_link' ), 9999 );
 	}
 
 	/**
@@ -157,18 +157,21 @@ class TogetherJS {
 	 * Renders the admin bar link.
 	 *
 	 * @since 0.0.1
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar WP_Admin_Bar instance, passed by reference.
 	 */
-	public function admin_bar_link() {
-		global $wp_admin_bar;
-		$wp_admin_bar->add_menu( array(
-			'id'        => 'together-js',
-			'title'     => self::$options['labelStart'],
-			'href'      => '#',
-			'meta'      => array(
-			'class' => 'hide-if-no-js',
-			// Handled by main.js for now: 'onclick' => 'TogetherJS(this); return false'.
-			),
-		) );
+	public function add_admin_bar_link( $wp_admin_bar ) {
+
+		$wp_admin_bar->add_menu(
+			array(
+				'id'        => 'together-js',
+				'title'     => self::$options['labelStart'],
+				'href'      => '#',
+				'meta'      => array(
+					'class' => 'hide-if-no-js',
+				),
+			)
+		);
 	}
 
 	/**
