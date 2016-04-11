@@ -5,6 +5,10 @@
 
 			init: function() {
 
+				if ( 'undefined' === typeof TogetherJS ) {
+					return;
+				}
+
 				TogetherJS.config( 'siteName', pluginTogetherJsVars.siteName );
 				TogetherJS.config( 'toolName', pluginTogetherJsVars.toolName );
 				TogetherJS.config( 'enableShortcut', pluginTogetherJsVars.enableShortcut );
