@@ -163,6 +163,10 @@ class TogetherJS {
 	 */
 	public function add_admin_bar_link( $wp_admin_bar ) {
 
+		if ( class_exists( 'Airplane_Mode_Core' ) && Airplane_Mode_Core::enabled() ) {
+			return;
+		}
+
 		$wp_admin_bar->add_menu(
 			array(
 				'id'        => 'together-js',
