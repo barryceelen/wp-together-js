@@ -3,8 +3,6 @@
 	$(function () {
 		var pluginTogetherJs = {
 
-			$el: $( '#wp-admin-bar-together-js a' ),
-
 			init: function() {
 
 				TogetherJS.config( 'siteName', pluginTogetherJsVars.siteName );
@@ -15,28 +13,24 @@
 
 				this.setupEventHandlers();
 			},
+
 			setupEventHandlers: function() {
 
-				var _this = this;
+				var $button = $( pluginTogetherJsVars.buttonEl ), $body = $( 'body' );
 
-				/**
-				 * According to the TogetherJS docs, the button label should be
-		 		 * switched automatically. As this does not seem to be the case,
-		 		 * we're doing it ourselves for now.
-				 */
+				$button.on( 'click', function(e) {
+					e.preventDefault();
+					TogetherJS();
+				});
+
 				TogetherJS.on( 'ready', function () {
-					_this.$el.html( pluginTogetherJsVars.labelStop );
-					_this.$el.toggleClass('togetherjs-started');
+					$button.html( pluginTogetherJsVars.labelStop );
+					$body.toggleClass( 'togetherjs-active' );
 				});
 
 				TogetherJS.on( 'close', function () {
-					_this.$el.html( pluginTogetherJsVars.labelStart );
-					_this.$el.toggleClass('togetherjs-started');
-				});
-
-				this.$el.on( 'click', function(e) {
-					e.preventDefault();
-					TogetherJS();
+					$button.html( pluginTogetherJsVars.labelStart );
+					$body.toggleClass( 'togetherjs-active' );
 				});
 			}
 		}

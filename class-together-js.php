@@ -149,6 +149,7 @@ class TogetherJS {
 				'enableShortcut' => self::$options['enableShortcut'],
 				'userName'       => self::$options['userName'],
 				'avatarUrl'      => self::$options['avatarUrl'],
+				'buttonEl'       => '#wp-admin-bar-together-js .ab-item',
 			)
 		);
 	}
